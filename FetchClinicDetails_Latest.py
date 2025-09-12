@@ -10,8 +10,10 @@ async def run():
         context = browser.contexts[0]
         page = await context.new_page()
 
+        stateName = "New York"
+
         # Open Google Maps search
-        await page.goto("https://www.google.com/maps/search/Dental+Clinic+new+york/")
+        await page.goto(f"https://www.google.com/maps/search/Dental+Clinic+{stateName}/")
         await page.wait_for_timeout(5000)  # allow extension to load
 
         # Keep scrolling until no new clinics load
@@ -22,7 +24,7 @@ async def run():
                 break
             prev_count = len(cards)
             await page.evaluate("document.querySelector('div[role=feed]').scrollBy(0, 2000)")
-            await page.wait_for_timeout(2000)
+            await page.wait_for_timeout(20000)
 
         print(f"✅ Total Clinics Found: {len(cards)}")
 
@@ -71,7 +73,7 @@ async def run():
 
         # Save results
         df = pd.DataFrame(data)
-        df.to_csv("scrapio_clinics.csv", index=False, encoding="utf-8-sig")
-        print("🎉 Data saved to scrapio_clinics.csv")
+        df.to_csv(f"scrapio_clinics_{stateName}.csv", index=False, encoding="utf-8-sig")
+        print("🎉 Data saved to "+ f"scrapio_clinics_{stateName}.csv")
 
 asyncio.run(run())
